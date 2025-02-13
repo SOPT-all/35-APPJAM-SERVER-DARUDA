@@ -31,7 +31,8 @@ public class SecurityConfig {
             "/api/v1/tools/**",
             "/api/v1/comments",
             "/api/v1/boards/board/**",
-            "/api/v1/users/kakao/login-url"};
+            "/api/v1/users/kakao/login-url",
+            "/v3/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**", "/swagger-ui/index.html"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -47,6 +48,7 @@ public class SecurityConfig {
                                 .authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
+                                .requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**", "/swagger-ui/index.html", "/swagger-ui/**").permitAll()
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() //OPTION 추가
                                 .anyRequest()
                                 .authenticated())

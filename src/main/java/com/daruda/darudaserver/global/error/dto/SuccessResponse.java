@@ -17,7 +17,7 @@ public record SuccessResponse<T>(
     }
 
     //성공응답(데이터 있음)
-    public static <T> SuccessResponse<T> of(SuccessCode successCode, T data){
+    public static <T> SuccessResponse<T> of(T data, SuccessCode successCode){
         return new SuccessResponse<>(successCode.getHttpStatus().value(), successCode.getMessage(), data);
     }
 }

@@ -7,6 +7,7 @@ import com.daruda.darudaserver.global.auth.UserId;
 import com.daruda.darudaserver.global.common.response.ApiResponse;
 import com.daruda.darudaserver.global.error.code.SuccessCode;
 
+import com.daruda.darudaserver.global.error.dto.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -29,43 +30,43 @@ public class ToolController {
      * 툴 세부정보 조회
      */
     @GetMapping("/tools/{tool-id}")
-    public ResponseEntity<ApiResponse<?>> getToolDetail(@AuthenticationPrincipal Long userIdOrNull,@PathVariable(name="tool-id") final Long toolId){
+    public ResponseEntity<SuccessResponse<ToolDetailGetRes>> getToolDetail(@AuthenticationPrincipal Long userIdOrNull, @PathVariable(name="tool-id") final Long toolId){
         ToolDetailGetRes toolDetail = toolService.getToolDetail(userIdOrNull, toolId);
-        return ResponseEntity.ok(ApiResponse.ofSuccessWithData(toolDetail, SuccessCode.SUCCESS_FETCH));
+        return ResponseEntity.ok(SuccessResponse.of(toolDetail, SuccessCode.SUCCESS_FETCH));
     }
 
     /**
      * 툴 핵심 기능 조회
      */
     @GetMapping("/tools/{tool-id}/core-features")
-    public ResponseEntity<ApiResponse<?>> getToolCoreFeature(@PathVariable(name="tool-id") final Long toolId){
+    public ResponseEntity<SuccessResponse<ToolCoreListRes>> getToolCoreFeature(@PathVariable(name="tool-id") final Long toolId){
         ToolCoreListRes toolCore = toolService.getToolCore(toolId);
-        return ResponseEntity.ok(ApiResponse.ofSuccessWithData(toolCore, SuccessCode.SUCCESS_FETCH));
+        return ResponseEntity.ok(SuccessResponse.of(toolCore, SuccessCode.SUCCESS_FETCH));
     }
 
     /**
      * 툴- 플랜 조회
      */
     @GetMapping("/tools/{tool-id}/plans")
-    public ResponseEntity<ApiResponse<?>> getToolPlans(@PathVariable(name="tool-id") final Long toolId){
+    public ResponseEntity<SuccessResponse<PlanListRes>> getToolPlans(@PathVariable(name="tool-id") final Long toolId){
         PlanListRes plan = toolService.getPlan(toolId);
-        return ResponseEntity.ok(ApiResponse.ofSuccessWithData(plan, SuccessCode.SUCCESS_FETCH));
+        return ResponseEntity.ok(SuccessResponse.of(plan, SuccessCode.SUCCESS_FETCH));
     }
 
     /**
      * 대안툴 조회
      */
     @GetMapping("/tools/{tool-id}/related-tool")
-    public ResponseEntity<ApiResponse<?>> getRelatedTool(@PathVariable(name="tool-id") final Long toolId){
+    public ResponseEntity<SuccessResponse<RelatedToolListRes>> getRelatedTool(@PathVariable(name="tool-id") final Long toolId){
         RelatedToolListRes relatedTool = toolService.getRelatedTool(toolId);
-        return ResponseEntity.ok(ApiResponse.ofSuccessWithData(relatedTool, SuccessCode.SUCCESS_FETCH));
+        return ResponseEntity.ok(SuccessResponse.of(relatedTool, SuccessCode.SUCCESS_FETCH));
     }
 
     /**
      * 툴 리스트 조회
      */
     @GetMapping("/tools")
-    public ResponseEntity<ApiResponse<?>> getToolList(
+    public ResponseEntity<SuccessResponse<ToolListRes>> getToolList(
             @AuthenticationPrincipal Long userIdOrNull,
             @RequestParam(defaultValue = "popular", value="criteria") String criteria,
             @RequestParam(defaultValue = "ALL", value="category") String category,
@@ -75,25 +76,25 @@ public class ToolController {
                                                              ){
         ToolListRes toolListRes = toolService.
                 getToolList(userIdOrNull, criteria , category, size, lastToolId , isFree);
-        return ResponseEntity.ok(ApiResponse.ofSuccessWithData(toolListRes,SuccessCode.SUCCESS_FETCH));
+        return ResponseEntity.ok(SuccessResponse.of(toolListRes,SuccessCode.SUCCESS_FETCH));
     }
 
     /**
      * 툴 찜하기
      */
     @PostMapping("/users/tools/{tool-id}/scrap")
-    public ResponseEntity<ApiResponse<?>> postToolScrap(@UserId final Long userId, @PathVariable(name="tool-id") final Long toolId){
+    public ResponseEntity<SuccessResponse<ToolScrapRes>> postToolScrap(@UserId final Long userId, @PathVariable(name="tool-id") final Long toolId){
         ToolScrapRes toolScrapRes = toolService.postToolScrap(userId, toolId);
-        return ResponseEntity.ok(ApiResponse.ofSuccessWithData(toolScrapRes, SuccessCode.SUCCESS_CREATE));
+        return ResponseEntity.ok(SuccessResponse.of(toolScrapRes, SuccessCode.SUCCESS_CREATE));
     }
     /**
      * 카테고리 조회 API
      */
     @GetMapping("/tools/category")
-    public ResponseEntity<ApiResponse<List<CategoryRes>>> getAllCategories() {
+    public ResponseEntity<SuccessResponse<List<CategoryRes>>> getAllCategories() {
         List<CategoryRes> categoryRes = Arrays.stream(Category.values())
                 .map(CategoryRes::from)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(ApiResponse.ofSuccessWithData(categoryRes, SuccessCode.SUCCESS_FETCH));
+        return ResponseEntity.ok(SuccessResponse.of(categoryRes, SuccessCode.SUCCESS_FETCH));
     }
 }

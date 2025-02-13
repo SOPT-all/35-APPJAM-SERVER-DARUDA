@@ -11,6 +11,7 @@ import com.daruda.darudaserver.domain.user.service.UserService;
 import com.daruda.darudaserver.global.auth.UserId;
 import com.daruda.darudaserver.global.common.response.ApiResponse;
 import com.daruda.darudaserver.global.error.code.SuccessCode;
+import com.daruda.darudaserver.global.error.dto.SuccessResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -51,41 +52,41 @@ public class KakaoController {
     }
 
     @PostMapping("/token")
-    public ResponseEntity<ApiResponse<LoginResponse>> postAuthenticationCode(@RequestHeader(value = "Authorization") String code){
+    public ResponseEntity<SuccessResponse<LoginResponse>> postAuthenticationCode(@RequestHeader(value = "Authorization") String code){
         log.debug("CODE = "+code);
         UserInfo userInfo = kakaoService.getInfo(code);
         LoginResponse loginResponse = userService.oAuthLogin(userInfo);
-        return ResponseEntity.ok(ApiResponse.ofSuccessWithData(loginResponse,SuccessCode.SUCCESS_CREATE));
+        return ResponseEntity.ok(SuccessResponse.of(loginResponse,SuccessCode.SUCCESS_CREATE));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<SignUpSuccessResponse>> signUp(@Valid @RequestBody SignUpRequest signUpRequest){
+    public ResponseEntity<SuccessResponse<SignUpSuccessResponse>> signUp(@Valid @RequestBody SignUpRequest signUpRequest){
         SignUpSuccessResponse signUpSuccessResponse = userService.createUser(signUpRequest.email(), signUpRequest.nickname(),signUpRequest.positions());
-        return ResponseEntity.ok(ApiResponse.ofSuccessWithData(signUpSuccessResponse,SuccessCode.SUCCESS_LOGIN));
+        return ResponseEntity.ok(SuccessResponse.of(signUpSuccessResponse,SuccessCode.SUCCESS_LOGIN));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<Long>> logOut(@UserId Long userId){
+    public ResponseEntity<SuccessResponse<Long>> logOut(@UserId Long userId){
         Long returnedUserId = userService.deleteUser(userId);
-        return  ResponseEntity.ok(ApiResponse.ofSuccessWithData(returnedUserId,SuccessCode.SUCCESS_LOGOUT));
+        return  ResponseEntity.ok(SuccessResponse.of(returnedUserId,SuccessCode.SUCCESS_LOGOUT));
     }
 
     @PostMapping("/nickname")
-    public ResponseEntity<ApiResponse<Boolean>> checkDuplicate(@NotNull(message = "닉네임은 필수입력값입니다") @RequestParam("nickname")String nickName){
+    public ResponseEntity<SuccessResponse<Boolean>> checkDuplicate(@NotNull(message = "닉네임은 필수입력값입니다") @RequestParam("nickname")String nickName){
         boolean result = userService.isDuplicated(nickName);
-        return ResponseEntity.ok(ApiResponse.ofSuccessWithData(result,SuccessCode.SUCCESS_FETCH));
+        return ResponseEntity.ok(SuccessResponse.of(result,SuccessCode.SUCCESS_FETCH));
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<ApiResponse<JwtTokenResponse>> regenerateToken(@UserId Long userId){
+    public ResponseEntity<SuccessResponse<JwtTokenResponse>> regenerateToken(@UserId Long userId){
         JwtTokenResponse jwtTokenResponse = userService.reissueToken(userId);
-        return ResponseEntity.ok(ApiResponse.ofSuccessWithData(jwtTokenResponse,SuccessCode.SUCCESS_REISSUE));
+        return ResponseEntity.ok(SuccessResponse.of(jwtTokenResponse,SuccessCode.SUCCESS_REISSUE));
     }
 
     @DeleteMapping("/withdraw")
-    public ResponseEntity<ApiResponse<?>> withdrawUser(@UserId Long userId){
+    public ResponseEntity<SuccessResponse<?>> withdrawUser(@UserId Long userId){
         userService.withdrawMe(userId);
-        return ResponseEntity.ok(ApiResponse.ofSuccess(SuccessCode.SUCCESS_WITHDRAW));
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_WITHDRAW));
     }
 
 }
